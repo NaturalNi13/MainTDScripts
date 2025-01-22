@@ -1,759 +1,268 @@
 local OrionLib = loadstring(game:HttpGet(("https://raw.githubusercontent.com/NaturalNi13/Essential-Scripts/refs/heads/main/Orion.lua")))()
+
 local Window =
+
     OrionLib:MakeWindow(
+
     {
+
         Name = "Aimbot GUI",
+
         HidePremium = false,
+
         SaveConfig = true,
+
         ConfigFolder = "Aimbotgui",
-        IntroEnabled = false,
+
+        IntroEnabled = true,
+
         IntroText = "Aimbot GUI - Natural Idiot"
+
     }
+
 )
+
 local Tab = Window:MakeTab({
+
 	Name = "Main",
+
 	Icon = nil,
+
 	PremiumOnly = false
+
 })
+
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
 local displayPlayers = ReplicatedStorage:WaitForChild("displayPlayers")
 
+
+
 -- Function to check if a player in the displayPlayers folder has 0 health
+
 local function isPlayerHealthZero(playerName)
+
     local player = displayPlayers:FindFirstChild(playerName)
     if player then
-        local health = player:FindFirstChild("health")
-        if health and health.Value == 0 then
+
+        local character = player:FindFirstChild("stats"):FindFirstChild("character")
+
+        if character and (character.Value == "sonicexe" or character.Value == "kolossos" or character.Value == "tailsdoll") then
+
             return true
+
         end
+
     end
+
     return false
+
 end
 
+
+
 local targetPlayer = nil
-local nearPlayerDistance = 1000
+
+local nearPlayerDistance = 150
 local aimBot = false  -- Make sure this is true to activate the aimbot
+
+
+
 -- Define the base offset
-                local baseRightOffset = 0.05 -- Base right offset that will scale with distance
-                local baseDownOffset = 0.06 -- Base down offset that will scale with distance
-local function isVisible(player)
-    -- Add your visibility logic here (for now we assume all players are visible)
-    return true
-end
 
--- Function to find the nearest player with 0 health
-local function findNearestTargetWithZeroHealth()
-    local nearestDistance = math.huge
-    local nearestPlayer = nil
-    for _, player in pairs(game:GetService("Players"):GetPlayers()) do
-        -- Ensure the player isn't the local player, has a character, and a HumanoidRootPart
-        if player ~= game:GetService("Players").LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-            -- Only target players whose health is 0
-            if isPlayerHealthZero(player.Name) then
-                local distance = (game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position - player.Character.HumanoidRootPart.Position).magnitude
-                -- Now, distance check comes *only* for players with 0 health
-                if distance <= nearPlayerDistance and distance < nearestDistance and isVisible(player) then
-                    nearestDistance = distance
-                    nearestPlayer = player
-                endlocal OrionLib = loadstring(game:HttpGet(("https://raw.githubusercontent.com/shlexware/Orion/main/source")))()
-
-local noCD = false
-local cLock = "tails"
-local isCLock = false
-local aimBot = false
-
-local players = game:GetService("Players")
-local player = players.LocalPlayer
-
-local character = nil
-
--- AimBot (ty Kevin)
-
--- Expressions
-local function applyHappyExpression()
-    local args = {
-        [1] = "happy"
-    }
-    game:GetService("ReplicatedStorage").remotes.expressions:FireServer(unpack(args))
-end
-local function applyAngryExpression()
-    local args = {
-        [1] = "angry"
-    }
-    game:GetService("ReplicatedStorage").remotes.expressions:FireServer(unpack(args))
-end
-local function applyBloodshotExpression()
-    local args = {
-        [1] = "bloodshot"
-    }
-    game:GetService("ReplicatedStorage").remotes.expressions:FireServer(unpack(args))
-end
-local function applyConfusedExpression()
-    local args = {
-        [1] = "confused"
-    }
-    game:GetService("ReplicatedStorage").remotes.expressions:FireServer(unpack(args))
-end
-local function applyClosedExpression()
-    local args = {
-        [1] = "closed"
-    }
-    game:GetService("ReplicatedStorage").remotes.expressions:FireServer(unpack(args))
-end
-local function applyClosed2Expression()
-    local args = {
-        [1] = "closed2"
-    }
-    game:GetService("ReplicatedStorage").remotes.expressions:FireServer(unpack(args))
-end
-local function applyDeadExpression()
-    local args = {
-        [1] = "dead"
-    }
-    game:GetService("ReplicatedStorage").remotes.expressions:FireServer(unpack(args))
-end
-local function applyExeExpression()
-    local args = {
-        [1] = "exe"
-    }
-    game:GetService("ReplicatedStorage").remotes.expressions:FireServer(unpack(args))
-end
-local function applyLaughExpression()
-    local args = {
-        [1] = "laugh"
-    }
-    game:GetService("ReplicatedStorage").remotes.expressions:FireServer(unpack(args))
-end
-local function applyNormalExpression()
-    local args = {
-        [1] = "normal"
-    }
-    game:GetService("ReplicatedStorage").remotes.expressions:FireServer(unpack(args))
-end
-local function applySadExpression()
-    local args = {
-        [1] = "sad"
-    }
-    game:GetService("ReplicatedStorage").remotes.expressions:FireServer(unpack(args))
-end
-local function applySeriousExpression()
-    local args = {
-        [1] = "serious"
-    }
-    game:GetService("ReplicatedStorage").remotes.expressions:FireServer(unpack(args))
-end
-local function applySpecialExpression()
-    local args = {
-        [1] = "special"
-    }
-    game:GetService("ReplicatedStorage").remotes.expressions:FireServer(unpack(args))
-end
-local function applyTiredExpression()
-    local args = {
-        [1] = "tired"
-    }
-    game:GetService("ReplicatedStorage").remotes.expressions:FireServer(unpack(args))
-end
-local function applyWorriedExpression()
-    local args = {
-        [1] = "worried"
-    }
-    game:GetService("ReplicatedStorage").remotes.expressions:FireServer(unpack(args))
-end
--- Main Code
-local function updateCoords()
-    if character then
-        local x = math.floor(character.HumanoidRootPart.CFrame.Position.X)
-        local z = math.floor(character.HumanoidRootPart.CFrame.Position.Z)
-        local y = math.floor(character.HumanoidRootPart.CFrame.Position.Y)
-        return x, y, z
-    end
-end
-local autoEscape = false
--- Function to find an exit object
-local function findExit(parent)
-    for _, child in ipairs(parent:GetChildren()) do
-        if #child:GetChildren() > 0 then -- Check if the child has children
-            return child
-        end
-    end
-    return nil -- No child with a child found
-end
-
-local screenGui = Instance.new("ScreenGui")
-screenGui.Parent = players.LocalPlayer:WaitForChild("PlayerGui")
- local function createAimBotButton()
-    -- Create a button to toggle the AimBot variable
-    local toggleAimBotButton = Instance.new("TextButton")
-    toggleAimBotButton.Parent = screenGui
-    toggleAimBotButton.Size = UDim2.new(0, 100, 0, 50) -- Button size
-    toggleAimBotButton.Position = UDim2.new(1, -110, 0, 10) -- Top right corner
-    toggleAimBotButton.Text = "AimBot Off" -- Initial text
-    toggleAimBotButton.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
-    toggleAimBotButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    toggleAimBotButton.BorderSizePixel = 0
-    toggleAimBotButton.Visible = false
-
-    -- Function to toggle AimBot
-    local function toggleAimBot()
-        aimBot = not aimBot
-        if aimBot then
-            toggleAimBotButton.Text = "AimBot On"
-            aimBot = true
-        else
-            toggleAimBotButton.Text = "AimBot Off"
-            aimBot = false
-        end
-    end
-
-    -- Connect the button click event to the toggle function
-    toggleAimBotButton.MouseButton1Click:Connect(toggleAimBot)
-
-    return toggleAimBotButton
-end
-
-
--- Function to teleport the player
-local function teleportPlayer()
-    local exitParent = Workspace.game.currentMap:getChildren()[1].default.exits
-    local exitLocation = findExit(exitParent)
-
-    if exitLocation and character then
-        character.HumanoidRootPart.CFrame =
-            CFrame.new(exitLocation.Position.X, exitLocation.Position.Y + 10, exitLocation.Position.Z)
-    end
-end
-local AimBotButton = nil
-local function onCharacterAdded(newCharacter)
-    character = newCharacter
-    screenGui = Instance.new("ScreenGui")
-    screenGui.Parent = players.LocalPlayer:WaitForChild("PlayerGui")
-    AimBotButton = createAimBotButton()
-    -- Wait for the necessary parts to be added
-    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-    local humanoid = character:WaitForChild("Humanoid")
-
-    -- Start the floating logic
-    local isFloating = false
-    local floatHeight = 5
-    local floatSpeed = 1
-    local currentY = humanoidRootPart.Position.Y
-
-    local function startFloating()
-        isFloating = true
-        humanoid.PlatformStand = true
-    end
-
-    local function stopFloating()
-        isFloating = false
-        humanoid.PlatformStand = false
-    end
-
-    local function updateFloat()
-        if isFloating then
-            local targetY = math.min(currentY + floatSpeed, floatHeight)
-            currentY = targetY
-            humanoidRootPart.Velocity = Vector3.new(0, (targetY - humanoidRootPart.Position.Y), 0)
-        end
-    end
-
-    -- Update position every frame
-    game:GetService("RunService").Heartbeat:Connect(updateFloat)
-
-    local updateTime = 0.01
-
-    while true do
-        local xpos, ypos, zpos = updateCoords()
-        if ypos and ypos < -20 then
-            startFloating()
-        else
-            stopFloating()
-        end
-        if ypos and ypos < 20 and isCLock then
-            local args = {
-                [1] = cLock
-            }
-
-            game:GetService("ReplicatedStorage"):WaitForChild("remotes"):WaitForChild("morphs"):FireServer(unpack(args))
-        end
-        if noCD then
-            if
-                game.ReplicatedStorage.displayPlayers:FindFirstChild(game.Players.LocalPlayer.Name) and
-                    game.ReplicatedStorage.displayPlayers[game.Players.LocalPlayer.Name]:FindFirstChild("cooldowns")
-             then
-                for _, child in ipairs(
-                    game.ReplicatedStorage.displayPlayers[game.Players.LocalPlayer.Name].cooldowns:GetChildren()
-                ) do
-                    if child:IsA("NumberValue") then
-                        child:Destroy()
-                    end
-                end
-            else
-                warn("Player not found.")
-            end
-        end
-        if autoEscape and ypos > 30 then
-            teleportPlayer()
-        end
-        wait(updateTime)
-    end
-end
-local function teleportTo(player, x, y, z)
-    player.Character.HumanoidRootPart.CFrame = CFrame.new(x, y, z)
-end
-
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local displayPlayers = ReplicatedStorage:WaitForChild("displayPlayers")
-
--- Function to check if a player in the displayPlayers folder has 0 health
-local function isPlayerHealthZero(playerName)
-    local player = displayPlayers:FindFirstChild(playerName)
-    if player then
-        local health = player:FindFirstChild("health")
-        if health and health.Value == 0 then
-            return true
-        end
-    end
-    return false
-end
-
-local targetPlayer = nil
-local nearPlayerDistance = 1000
-local aimBot = false -- Make sure this is true to activate the aimbot
--- Define the base offset
 local baseRightOffset = 0.05 -- Base right offset that will scale with distance
-local baseDownOffset = 0.06 -- Base down offset that will scale with distance
+
+local baseDownOffset = 0.05 -- Base down offset that will scale with distance
+
+
+
 local function isVisible(player)
+
     -- Add your visibility logic here (for now we assume all players are visible)
+
     return true
+
 end
+
+
 
 -- Function to find the nearest player with 0 health
+
 local function findNearestTargetWithZeroHealth()
+
     local nearestDistance = math.huge
+
     local nearestPlayer = nil
+
     for _, player in pairs(game:GetService("Players"):GetPlayers()) do
+
         -- Ensure the player isn't the local player, has a character, and a HumanoidRootPart
-        if
-            player ~= game:GetService("Players").LocalPlayer and player.Character and
-                player.Character:FindFirstChild("HumanoidRootPart")
-         then
+
+        if player ~= game:GetService("Players").LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+
             -- Only target players whose health is 0
+
             if isPlayerHealthZero(player.Name) then
-                local distance =
-                    (game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position -
-                    player.Character.HumanoidRootPart.Position).magnitude
+
+                local distance = (game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position - player.Character.HumanoidRootPart.Position).magnitude
+
                 -- Now, distance check comes *only* for players with 0 health
+
                 if distance <= nearPlayerDistance and distance < nearestDistance and isVisible(player) then
+
                     nearestDistance = distance
+
                     nearestPlayer = player
+
                 end
+
             end
+
         end
+
     end
+
     return nearestPlayer
+
 end
 
--- Function to lock the camera onto the nearest player with 0 health and apply dynamic scaling to the offset
+
+
+-- Function to smoothly rotate the camera to face the nearest player with 0 health
+
 local function camlock()
+
     if aimBot then
+
+        -- Update the target player
+
         targetPlayer = findNearestTargetWithZeroHealth()
+
+
+
         if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+
             local camera = workspace.CurrentCamera
-            local humanoidRootPart = targetPlayer.Character.HumanoidRootPart
-            if humanoidRootPart then
-                -- Get the camera's current position and the target's position
-                local cameraPosition = camera.CFrame.Position
-                local targetPosition = humanoidRootPart.Position
 
-                -- Calculate the direction from the camera to the target
-                local directionToTarget = (targetPosition - cameraPosition).unit
+            local targetHumanoidRootPart = targetPlayer.Character.HumanoidRootPart
 
-                -- Calculate the distance between the camera and the target
-                local distanceToTarget = (targetPosition - cameraPosition).magnitude
 
-                -- Multiply the base offsets by the distance to scale dynamically
-                local rightOffset = baseRightOffset * distanceToTarget
-                local downOffset = baseDownOffset * distanceToTarget
 
-                -- Offset based on camera's orientation, now scaled by distance
-                local rightVector = camera.CFrame.RightVector
-                local downVector = -camera.CFrame.UpVector
-                local offset = (rightVector * rightOffset) + (downVector * downOffset)
+            -- Get the target's position
 
-                -- Set the camera to look at the target position with the dynamic offset applied
-                camera.CFrame = CFrame.new(cameraPosition, targetPosition + offset)
-            end
+            local targetPosition = targetHumanoidRootPart.Position
+
+
+
+            -- Get the camera's current position and look at the target, keeping the camera in its current position
+
+            local cameraPosition = camera.CFrame.Position
+
+
+
+            -- Multiply the base offsets by the distance to scale dynamically
+
+            local distanceToTarget = (targetPosition - cameraPosition).magnitude
+
+            local rightOffset = baseRightOffset * distanceToTarget
+
+            local downOffset = baseDownOffset * distanceToTarget
+
+
+
+            -- Offset based on camera's orientation, now scaled by distance
+
+            local rightVector = camera.CFrame.RightVector
+
+            local downVector = -camera.CFrame.UpVector
+
+            local offset = (rightVector * rightOffset) + (downVector * downOffset)
+
+
+
+            -- Smoothly rotate the camera towards the target, without changing the camera's position
+
+            local newCFrame = CFrame.new(cameraPosition, targetPosition + offset)
+
+            camera.CFrame = camera.CFrame:Lerp(newCFrame, 1) -- Smooth camera transition
+
         end
+
     end
+
 end
+
+
 
 -- Connect the camlock function to the RenderStepped event for continuous aiming
+
 game:GetService("RunService").RenderStepped:Connect(camlock)
 
 
 
-
-AimBotButton = createAimBotButton()
--- GUI
-local Window =
-    OrionLib:MakeWindow(
-    {
-        Name = "TD 1.2 GUI",
-        HidePremium = false,
-        SaveConfig = true,
-        ConfigFolder = "NATSTDGUI",
-        IntroEnabled = false,
-        IntroText = "TD 1.2 GUI - Natural Idiot"
-    }
-)
-OrionLib:MakeNotification(
-    {
-        Name = "Login successful!",
-        Content = "Welcome!",
-        Image = nil,
-        Time = 5
-    }
-)
-
-local CreditsTab =
-    Window:MakeTab(
-    {
-        Name = "Credits",
-        Icon = nil,
-        PremiumOnly = false
-    }
-)
-local ModsTab =
-    Window:MakeTab(
-    {
-        Name = "Mods",
-        Icon = nil,
-        PremiumOnly = false
-    }
-)
-local InstalockTab =
-    Window:MakeTab(
-    {
-        Name = "Instalock",
-        Icon = nil,
-        PremiumOnly = false
-    }
-)
-local WarpsTab =
-    Window:MakeTab(
-    {
-        Name = "Warps",
-        Icon = nil,
-        PremiumOnly = false
-    }
-)
-local ExpressionsTab =
-    Window:MakeTab(
-    {
-        Name = "Expressions",
-        Icon = nil,
-        PremiumOnly = false
-    }
-)
-
-CreditsTab:AddParagraph("Credits", "KevinMitnikHKR for help on no cool down, Orion for the gui, M9G4 for expressions")
-
-ModsTab:AddButton(
-    {
-        Name = "Double Trouble - USE WHEN EXE",
-        Callback = function()
-            loadstring(game:HttpGet("https://pastebin.com/raw/cnvfhX6H"))()
-        end
-    }
-)
-
-ModsTab:AddToggle(
-    {
-        Name = "No Cooldown",
-        Default = false,
-        Callback = function(Value)
-            noCD = Value
-        end
-    }
-)
-
-ModsTab:AddButton(
-    {
-        Name = "Perma Indicator - CANT TURN OFF",
-        Callback = function()
-            loadstring(game:HttpGet("https://pastebin.com/raw/LRMqt4rE"))()
-        end
-    }
-)
-
-ModsTab:AddToggle(
-    {
-        Name = "Auto Escape",
-        Default = false,
-        Callback = function(Value)
-            autoEscape = Value
-        end
-    }
-)
-
-InstalockTab:AddDropdown(
-    {
-        Name = "Instalock Character",
-        Default = "tails",
-        Options = {"tails", "knuckles", "eggman", "amy", "cream", "sally", "shadow", "rouge", "metalsonic"},
-        Callback = function(Value)
-            cLock = Value
-        end
-    }
-)
-
-InstalockTab:AddToggle(
-    {
-        Name = "Enabled",
-        Default = false,
-        Callback = function(Value)
-            isCLock = Value
-        end
-    }
-)
-
-WarpsTab:AddButton(
-    {
-        Name = "Lobby",
-        Callback = function()
-            teleportTo(player, 0, 10, 30)
-        end
-    }
-)
-
-WarpsTab:AddButton(
-    {
-        Name = "Box",
-        Callback = function()
-            teleportTo(player, 0, 10, -90)
-        end
-    }
-)
-
-ExpressionsTab:AddButton(
-    {
-        Name = "Happy",
-        Callback = function()
-            applyHappyExpression()
-        end
-    }
-)
-ExpressionsTab:AddButton(
-    {
-        Name = "Angry",
-        Callback = function()
-            applyAngryExpression()
-        end
-    }
-)
-
-ExpressionsTab:AddButton(
-    {
-        Name = "Bloodshot",
-        Callback = function()
-            applyBloodshotExpression()
-        end
-    }
-)
-
-ExpressionsTab:AddButton(
-    {
-        Name = "Confused",
-        Callback = function()
-            applyConfusedExpression()
-        end
-    }
-)
-
-ExpressionsTab:AddButton(
-    {
-        Name = "Closed",
-        Callback = function()
-            applyClosedExpression()
-        end
-    }
-)
-
-ExpressionsTab:AddButton(
-    {
-        Name = "Closed2",
-        Callback = function()
-            applyClosed2Expression()
-        end
-    }
-)
-
-ExpressionsTab:AddButton(
-    {
-        Name = "Dead",
-        Callback = function()
-            applyDeadExpression()
-        end
-    }
-)
-
-ExpressionsTab:AddButton(
-    {
-        Name = "Exe",
-        Callback = function()
-            applyExeExpression()
-        end
-    }
-)
-
-ExpressionsTab:AddButton(
-    {
-        Name = "Laugh",
-        Callback = function()
-            applyLaughExpression()
-        end
-    }
-)
-
-ExpressionsTab:AddButton(
-    {
-        Name = "Normal",
-        Callback = function()
-            applyNormalExpression()
-        end
-    }
-)
-
-ExpressionsTab:AddButton(
-    {
-        Name = "Sad",
-        Callback = function()
-            applySadExpression()
-        end
-    }
-)
-
-ExpressionsTab:AddButton(
-    {
-        Name = "Serious",
-        Callback = function()
-            applySeriousExpression()
-        end
-    }
-)
-
-ExpressionsTab:AddButton(
-    {
-        Name = "Special",
-        Callback = function()
-            applySpecialExpression()
-        end
-    }
-)
-
-ExpressionsTab:AddButton(
-    {
-        Name = "Tired",
-        Callback = function()
-            applyTiredExpression()
-        end
-    }
-)
-
-ExpressionsTab:AddButton(
-    {
-        Name = "Worried",
-        Callback = function()
-            applyWorriedExpression()
-        end
-    }
-)
-ModsTab:AddToggle(
-    {
-        Name = "Aimbot",
-        Default = false,
-        Callback = function(Value)
-            AimBotButton.Visible = Value
-        end
-    }
-)
--- Connect the onCharacterAdded function to the CharacterAdded event
-player.CharacterAdded:Connect(onCharacterAdded)
-
--- If the player already has a character, call onCharacterAdded
-if player.Character then
-    onCharacterAdded(player.Character)
-end
-
-OrionLib:Init()
-
-            end
-        end
-    end
-    return nearestPlayer
-end
-
--- Function to lock the camera onto the nearest player with 0 health and apply dynamic scaling to the offset
-local function camlock()
-    if aimBot then
-        targetPlayer = findNearestTargetWithZeroHealth()
-        if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
-            local camera = workspace.CurrentCamera
-            local humanoidRootPart = targetPlayer.Character.HumanoidRootPart
-            if humanoidRootPart then
-                -- Get the camera's current position and the target's position
-                local cameraPosition = camera.CFrame.Position
-                local targetPosition = humanoidRootPart.Position
-
-                -- Calculate the direction from the camera to the target
-                local directionToTarget = (targetPosition - cameraPosition).unit
-
-                -- Calculate the distance between the camera and the target
-                local distanceToTarget = (targetPosition - cameraPosition).magnitude
-
-                
-
-                -- Multiply the base offsets by the distance to scale dynamically
-                local rightOffset = baseRightOffset * distanceToTarget
-                local downOffset = baseDownOffset * distanceToTarget
-
-                -- Offset based on camera's orientation, now scaled by distance
-                local rightVector = camera.CFrame.RightVector
-                local downVector = -camera.CFrame.UpVector
-                local offset = (rightVector * rightOffset) + (downVector * downOffset)
-
-                -- Set the camera to look at the target position with the dynamic offset applied
-                camera.CFrame = CFrame.new(cameraPosition, targetPosition + offset)
-            end
-        end
-    end
-end
-
--- Connect the camlock function to the RenderStepped event for continuous aiming
-game:GetService("RunService").RenderStepped:Connect(camlock)
-
+-- GUI Elements for toggling aimbot and adjusting offsets
 
 Tab:AddToggle({
-	Name = "Aimbot",
+
+	Name = "Aimbot (USE CROSSHAIR AIMING)",
+
 	Default = false,
+
 	Callback = function(Value)
+
 		aimBot = Value
+
 	end    
+
 })
+
+
+
 Tab:AddTextbox({
-	Name = "Horizontal",
+
+	Name = "Horizontal Offset (td aiming isnt exact)",
+
 	Default = "0.05",
+
 	TextDisappear = false,
+
 	Callback = function(Value)
+
 		baseRightOffset = tonumber(Value)
+
 	end	  
+
 })
+
+
+
 Tab:AddTextbox({
-	Name = "Vertical",
-	Default = "0.06",
+
+	Name = "Vertical Offset (td aiming isnt exact)",
+
+	Default = "0.05",
+
 	TextDisappear = false,
+
 	Callback = function(Value)
+
 		baseDownOffset = tonumber(Value)
+
 	end	  
+
+})
+
+Tab:AddTextbox({
+
+	Name = "Aimbot Range (1000 is about the whole k&f map. Auto aims if exe in range in studs)",
+
+	Default = "150",
+
+	TextDisappear = false,
+
+	Callback = function(Value)
+
+		nearPlayerDistance = tonumber(Value)
+	end	  
+
 })
